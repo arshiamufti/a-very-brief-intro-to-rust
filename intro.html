@@ -487,7 +487,7 @@ class: middle, left
 
 ## Iterators
 
-```
+```rust
 for i in (0..10).filter(|x| x % 2 == 0) {
     println!("i = {}", i);
 }
@@ -642,6 +642,12 @@ class: middle, left
 
 ## Syntax + Concepts particular to Rust
 
+???
+
+We'll now go through a couple of concepts that are pretty specific to Rust.
+Some of these concepts can be found in other languages, but most of these are
+features where many major languages do things differently.
+
 ---
 class: middle, left
 
@@ -652,14 +658,28 @@ class: middle, left
 Option is an enum provided by the standard library:
 
 ```rust
+// T is a generic type parameter. "Some" can hold any type.
 enum Option<T> {
     Some(T),
     None
+}
+
+fn main() {
+  let mut a = Some(32); // a is of type Option<i32>
+  println!("{:?}", a); // outputs "Some(32)"
+  a = None;
+  println!("{:?}", a); // outputs "None"
 }
 ```
 
 ???
 
+* In many major languages like C/C++/Java/Python, you always have this implicit
+  null case to deal with.
+* You have to worry that any value you are using might
+  be null, nullptr, None or whatever other word that language has for that same
+  concept.
+* In Rust, any case where a value may or may not be there is made explicit
 * T is a generic type parameter, means Some can hold any type
 * No more undefined method on nil!!!!
 
@@ -669,7 +689,7 @@ class: middle, left
 ## Using Option
 
 ```rust
-let mut instructors = vec!["Carol"];
+let mut instructors = vec!["Josh"];
 
 let a = instructors.pop();
 println!("a is {:?}", a);
@@ -688,7 +708,7 @@ class: middle, left
 ## Using Option
 
 ```rust
-let a = Some("Carol");
+let a = Some("Arshia");
 
 let name = a.expect("No name present");
 println!("Name is {} bytes long", name.len());
@@ -696,6 +716,7 @@ println!("Name is {} bytes long", name.len());
 
 ???
 
+* In this example, we want to print out the length of the string in a
 * Can't call `len` on an `Option` directly since it could be `None`!
 * expect panics if it gets a None, good for prototyping or when you're REALLY REALLY SURE you have Some
     * Set an error message in expect that is useful to you for debugging
@@ -724,6 +745,9 @@ match b {
 ???
 
 * Match is useful for handling both cases
+* In fact, if you remove either branch, Rust will tell you that you haven't
+  handled a case and ask you to add the case you missed.
+  * This is really helpful for avoiding a lot of mistakes
 * Option is just another enum!
 
 ---
@@ -744,6 +768,15 @@ enum Result<T, E> {
 
 ???
 
+* Result is another enum in the standard library.
+* It's used to express when something could succeed or fail.
+* Option was for when a value may or may not be there, and Result is for when
+  something you're computing could result in an error
+* Rust doesn't have exceptions. Result is how you handle errors.
+* With Option, Rust was solving the problem of always having to worry
+  about null. With Result, Rust is making it so you always know explicitly when
+  you might need to handle an error
+
 ---
 class: middle, left
 
@@ -751,9 +784,11 @@ class: middle, left
 
 ```rust
 let numstr = "6";
-let num = numstr.parse::<i32>();
+let num = numstr.parse::<i32>(); // Turbofish! ::<>
 println!("num = {:?}", num);
+```
 
+```rust
 let numstr = "florp";
 let num = numstr.parse::<i32>();
 println!("num = {:?}", num);
@@ -762,6 +797,8 @@ println!("num = {:?}", num);
 ???
 
 * Turbofish! Because we could parse into many different types.
+* In the first case, we'll get back Ok("6")
+* In the second case, we'll get back Err(ParseIntError { kind: InvalidDigit })
 
 ---
 class: middle, left
